@@ -1,6 +1,6 @@
 # pchat — Modern Terminal Live Chat Viewer
 
-![pchat demo](assets/demo.gif)
+![pchat demo](/docs/Tokio-Night.png)
 
 pchat is a **beautiful**, **blazingly fast** terminal application to display live stream chats directly in your terminal. Built with Rust and ❤️ for the Linux community, pchat supports multiple backends (YouTube official API, mock, and experimental internal), customizable themes, and an elegant TUI that stays responsive even under heavy chat loads.
 
@@ -131,16 +131,14 @@ It copies all themes to ~/.config/pchat/themes/ and creates a default config.tom
 
 ## 🖼️ Screenshots
 
-```bash
-https://assets/screenshot-cyber-neon.png
-Cyber Neon theme with mock chat
+Cyber Neon theme
+![cyber theme](/docs/Cyber.png)
 
-https://assets/screenshot-white-pearl.png
-White Pearl theme (compact mode)
+Cooffee-Break theme
+![cooffee theme](/docs/Coffee-Break.png)
 
-https://assets/screenshot-official-live.png
-Connected to a real YouTube live stream using official backend
-```
+Nord theme
+![nord theme](/docs/nord.png)
 
 ## 🔧 Development
 

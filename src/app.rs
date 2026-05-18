@@ -1,7 +1,7 @@
 //! Gestión del estado de la aplicación: mensajes, estadísticas y configuración visual.
 
 use tokio::sync::mpsc;
-use crate::models::ChatMessage;
+use crate::models::{ChatMessage, StreamInfo};
 use crate::themes::Theme;
 
 /// Estructura principal que mantiene el estado de la aplicación.
@@ -25,16 +25,6 @@ pub struct App {
     spam_counter: u64,
     // Longitud actual de la cola de mensajes (para estadísticas).
     queue_len: usize,
-}
-
-/// Información pública del stream.
-pub struct StreamInfo {
-    pub title: String,
-    pub channel_name: String,
-    pub viewers: String,
-    pub like_count: String,
-    pub view_count: String,
-    pub is_live: bool,
 }
 
 impl App {

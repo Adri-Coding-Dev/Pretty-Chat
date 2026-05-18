@@ -54,6 +54,9 @@ async fn main() -> color_eyre::Result<()> {
 
     let cli = Cli::parse();
 
+    // Extraer el video ID una sola vez para no mover cli.url repetidamente
+    let video_id = extract_video_id(&cli.url).unwrap_or_default();
+
     // Cargar configuración global desde ~/.config/pchat/config.toml
     let config = AppConfig::load().unwrap_or_default();
 
@@ -86,16 +89,16 @@ async fn main() -> color_eyre::Result<()> {
     // Canal de mensajes entre el backend y la UI
     let (tx, rx) = mpsc::unbounded_channel();
 
-    // Selección del backend de chat
+    // Selección del backend de chat (usamos .clone() para no mover cli.url)
     let chat_backend: Box<dyn ChatBackend> = match cli.backend.as_str() {
-        "internal" => Box::new(InternalBackend::new(cli.url)),
+        "internal" => Box::new(InternalBackend::new(cli.url.clone())),
         "official" => {
             let api_key = std::env::var("YOUTUBE_API_KEY")
                 .unwrap_or_else(|_| {
                     eprintln!("Error: La variable de entorno YOUTUBE_API_KEY no está definida.");
                     std::process::exit(1);
                 });
-            Box::new(OfficialBackend::new(cli.url, api_key))
+            Box::new(OfficialBackend::new(cli.url.clone(), api_key))
         },
         "mock" => {
             info!("Usando backend de demostración (mock)");
@@ -117,7 +120,6 @@ async fn main() -> color_eyre::Result<()> {
         "official" => {
             let api_key = std::env::var("YOUTUBE_API_KEY")
                 .expect("YOUTUBE_API_KEY no definida");
-            let video_id = extract_video_id(&cli.url).unwrap_or_default();
             fetch_stream_info(&video_id, &api_key).await.ok()
         },
         "mock" => Some(StreamInfo {
