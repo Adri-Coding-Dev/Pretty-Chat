@@ -1,0 +1,42 @@
+[package]
+name = "pchat"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Interfaz de usuario en terminal (TUI)
+ratatui = "0.27"
+crossterm = "0.27"
+
+# Async runtime y canales
+tokio = { version = "1", features = ["full"] }
+
+# HTTP client (usamos rustls para no depender de OpenSSL)
+reqwest = { version = "0.12", features = ["json", "cookies", "rustls-tls"], default-features = false }
+
+# Serialización / Deserialización
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# CLI (argumentos de línea de comandos)
+clap = { version = "4", features = ["derive"] }
+
+# Manejo de errores con colores
+color-eyre = "0.6"
+
+# Logging estructurado
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Generación de números aleatorios (para delays)
+fastrand = "2"
+
+# Traits asíncronos
+async-trait = "0.1"
+
+# Directorios de configuración
+dirs = "5"
+
+# Manejo de fechas (para el backend oficial)
+chrono = { version = "0.4", features = ["serde"] }

@@ -1,0 +1,10 @@
+[colors]
+background = "#1e2a24"
+foreground = "#c9e4c5"
+border = "#3a5a40"
+moderator = "#f4a261"
+verified = "#2a9d8f"
+member = "#e9c46a"
+superchat = "#e76f51"
+info = "#8ecae6"
+alert = "#ffb703"

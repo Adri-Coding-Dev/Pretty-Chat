@@ -1,0 +1,10 @@
+[colors]
+background = "#0a0a0a"
+foreground = "#00ffcc"
+border = "#ff00ff"
+moderator = "#ff0000"
+verified = "#00ff00"
+member = "#ffaa00"
+superchat = "#ff00ff"
+info = "#00ffff"
+alert = "#ffff00"
