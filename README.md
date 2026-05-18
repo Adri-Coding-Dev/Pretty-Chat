@@ -31,8 +31,8 @@ pchat is a **beautiful**, **blazingly fast** terminal application to display liv
 
 ### From source
 ```bash
-git clone https://github.com/youruser/pchat.git
-cd pchat
+https://github.com/Adri-Coding-Dev/Pretty-Chat.git
+cd Pretty-Chat
 ./build.sh
 ```
 
