@@ -1,5 +1,6 @@
 //! Motor de renderizado de la interfaz de usuario.
 //! Dibuja los paneles de cabecera, chat y estadísticas aplicando el tema seleccionado.
+//! La cabecera ahora muestra la información del stream en dos líneas para mayor claridad.
 
 use ratatui::{
     layout::{Constraint, Direction, Layout, Margin},
@@ -36,39 +37,66 @@ pub fn draw(f: &mut Frame, app: &App) {
     let info_color = theme.map(|t| get_style_from_hex(&t.colors.info)).unwrap_or(Color::LightCyan);
     let alert_color = theme.map(|t| get_style_from_hex(&t.colors.alert)).unwrap_or(Color::LightRed);
 
-    // Layout vertical: cabecera, chat, pie
+    // Layout vertical: cabecera (5 líneas), chat, pie (3 líneas)
     let main_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3),   // Cabecera
+            Constraint::Length(5),   // Cabecera ampliada
             Constraint::Min(10),     // Chat
             Constraint::Length(3),   // Estadísticas
         ])
         .split(f.size());
 
     // ---------- Cabecera ----------
-    let header_text = if let Some(ref info) = app.stream_info {
-        format!(
-            " {} {} | {} | {} likes | {} views | {} watching ",
-            if info.is_live { "LIVE" } else { "OFFLINE" },
-            info.title,
-            info.channel_name,
-            info.like_count,
-            info.view_count,
-            info.viewers
-        )
-    } else {
-        " pchat — Live Chat Viewer ".to_string()
-    };
-
-    let header = Block::default()
+    let header_block = Block::default()
         .borders(Borders::ALL)
         .border_type(BorderType::Double)
         .border_style(Style::default().fg(info_color))
-        .title(format!(" {} ", header_text))
+        .title(" STREAM INFO ")
         .title_style(Style::default().fg(info_color).bold())
         .style(Style::default().bg(bg));
-    f.render_widget(header, main_chunks[0]);
+    f.render_widget(header_block, main_chunks[0]);
+
+    let header_inner = main_chunks[0].inner(Margin { vertical: 1, horizontal: 2 });
+
+    if let Some(ref info) = app.stream_info {
+        // Línea 1: estado + título
+        let status = if info.is_live {
+            Span::styled(" LIVE ", Style::default().fg(Color::Red).bg(Color::Black).bold())
+        } else {
+            Span::styled(" OFFLINE ", Style::default().fg(Color::Gray).bg(Color::Black).bold())
+        };
+        let title = Span::styled(&info.title, Style::default().fg(fg).bold());
+        let line1 = Line::from(vec![status, Span::raw(" "), title]);
+
+        // Línea 2: canal, likes, views, watching
+        let channel = Span::styled(
+            format!(" {} ", info.channel_name),
+            Style::default().fg(info_color).bold(),
+        );
+        let likes = Span::styled(
+            format!("|  Likes: {} ", info.like_count),
+            Style::default().fg(fg),
+        );
+        let views = Span::styled(
+            format!("|  Views: {} ", info.view_count),
+            Style::default().fg(fg),
+        );
+        let watching = Span::styled(
+            format!("|  Watching: {} ", info.viewers),
+            Style::default().fg(alert_color).bold(),
+        );
+        let line2 = Line::from(vec![channel, likes, views, watching]);
+
+        // Renderizar las dos líneas dentro del header
+        let header_text = vec![line1, line2];
+        let paragraph = Paragraph::new(header_text);
+        f.render_widget(paragraph, header_inner);
+    } else {
+        let line = Line::from(Span::styled(" pchat — Live Chat Viewer ", Style::default().fg(fg).bold()));
+        let paragraph = Paragraph::new(line);
+        f.render_widget(paragraph, header_inner);
+    }
 
     // ---------- Chat ----------
     let chat_block = Block::default()
@@ -168,7 +196,6 @@ fn format_message(
     spans.push(Span::styled(msg.username.clone(), Style::default().fg(name_color).bold()));
 
     if !compact {
-        // Convertir timestamp a HH:MM:SS o MM:SS
         let ts = msg.timestamp as f64 / 1000.0;
         let secs = ts as u64 % 60;
         let mins = (ts as u64 / 60) % 60;
